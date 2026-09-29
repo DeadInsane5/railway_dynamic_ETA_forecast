@@ -5,6 +5,15 @@
 
   var state = { trains: [], selected: null, eta: null };
 
+  /* Regime table: trains that are actually under way, capped so the card
+   * stays above the fold. Two categories are dropped, for the same reasons as
+   * the Jidoka queue: a train that has not departed has no observed regime and
+   * no path decision worth watching (the router only sends it to fallback
+   * because there is nothing to forecast from), and a train that has reached
+   * its last stop is finished. The cap is a safety valve -- on the demo data
+   * the en-route count sits at 10-12 on its own. */
+  var REGIME_ROWS_MAX = 12;
+
   function $(id) { return document.getElementById(id); }
 
   function esc(s) {
@@ -85,12 +94,21 @@
   }
 
   function renderRegimeTable() {
-    var rows = state.trains.map(function (t) {
+    var underWay = state.trains.filter(function (t) {
+      return Number(t.cur_ts) > 0 && t.next_station != null;
+    });
+    var shown = underWay.slice(0, REGIME_ROWS_MAX);
+    var rows = shown.map(function (t) {
       return "<tr><td>" + esc(t.train_id) + "</td><td>" + regimeBadge(t.regime) +
         "</td><td>" + pathBadge(t.path) + "</td><td>" +
         esc(Number(t.cur_delay).toFixed(1)) + " min</td></tr>";
     }).join("");
-    $("regime-table").querySelector("tbody").innerHTML = rows;
+    $("regime-table").querySelector("tbody").innerHTML = rows ||
+      '<tr><td colspan="4">No trains under way.</td></tr>';
+    $("regime-count").textContent = shown.length < underWay.length
+      ? "Showing " + shown.length + " of " + underWay.length +
+        " trains under way (" + state.trains.length + " tracked)"
+      : underWay.length + " of " + state.trains.length + " trains under way";
   }
 
   function renderETA() {
