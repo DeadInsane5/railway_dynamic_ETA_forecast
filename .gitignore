@@ -9,3 +9,5 @@ data/audit.jsonl
 data/*.pkl
 # OS
 .DS_Store
+# DEMO-GUIDE
+DEMO-GUIDE.md
