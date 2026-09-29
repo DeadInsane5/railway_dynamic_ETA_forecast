@@ -163,6 +163,29 @@ def _restriction_ahead_for(train: dict) -> bool:
         return False
 
 
+def _fallback_actionable(train: dict) -> bool:
+    """True if a stale-feed fallback is worth a human's attention.
+
+    Two cases look like anomalies to the feed-age rule but are not:
+
+    - no observation yet (``cur_ts == 0``): the train has not departed, so
+      the feed is absent rather than stale. The router still sends it down
+      the schedule path — that is correct, it just is not a Jidoka stop.
+    - already at its last stop: the run is over, there is nothing to
+      re-forecast.
+
+    Queueing both buries the real anomalies (one item per not-yet-departed
+    train, i.e. 26 of 34 on a fresh boot) — the alert fatigue Jidoka exists
+    to prevent.
+    """
+    if float(train.get("cur_ts", 0.0) or 0.0) <= 0:
+        return False
+    stops = train.get("stops") or []
+    if stops and int(train.get("cur_seq", -1)) >= len(stops) - 1:
+        return False
+    return True
+
+
 def _explain_station(
     station: str,
     p50_time: float,
@@ -219,13 +242,14 @@ def _build_eta_for(train: dict) -> dict:
     except (TypeError, ValueError):
         confidence = 0.0
 
-    # Jidoka schedule-fallback flag (dedupe: one open fallback per train).
+    # Jidoka schedule-fallback flag (dedupe: one open fallback per train,
+    # and only for trains that have actually started and not yet finished).
     try:
         has_open_fb = any(
             i["kind"] == "fallback" and i["train_id"] == tid and i["status"] == "open"
             for i in jidoka.all_items()
         )
-        if not has_open_fb:
+        if not has_open_fb and _fallback_actionable(train):
             jidoka.maybe_fallback(tid, confidence, feed_age, now)
     except Exception:
         pass
