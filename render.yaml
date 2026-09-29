@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: dynamic-eta-forecast
+    runtime: python
+    plan: free
+    buildCommand: pip install -U pip && pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/trains
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: PYTHONUNBUFFERED
+        value: 1
