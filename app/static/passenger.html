@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Passenger View — Dynamic ETA Forecast (Simulated data)</title>
+  <!-- UX4G delivery: authoritative pinned CDN (non-Node project, no npm).
+       Docs: https://doc.ux4g.gov.in/web/ ; classes mirror index.html (T12).
+       Theme: approved navy/saffron root overrides inherited from style.css;
+       no new token overrides on this page. -->
+  <link rel="stylesheet" href="https://cdn.ux4g.gov.in/UX4G@3.2.0/index.css" />
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://cdn.ux4g.gov.in/UX4G@3.2.0/ux4g.js" defer></script>
+  <script src="https://cdn.ux4g.gov.in/UX4G@3.2.0/ux4g-custom.js" defer></script>
+  <script src="./passenger.js" defer></script>
+</head>
+<body>
+  <div class="tricolour-strip" aria-hidden="true"></div>
+
+  <header class="ux4g-navbar ux4g-navbar-desktop">
+    <div class="ux4g-navbar-wrap">
+      <div class="ux4g-navbar-logo">
+        <strong>Ministry of Railways — Dynamic ETA Forecast</strong>
+        <span class="ux4g-badge-digit-warning ux4g-badge-m">Simulated data</span>
+      </div>
+      <nav class="ux4g-navbar-links" aria-label="Primary">
+        <a class="ux4g-btn ux4g-btn-text-primary ux4g-btn-sm" href="./index.html">Control Room</a>
+        <a class="ux4g-btn ux4g-btn-primary ux4g-btn-sm" href="./passenger.html" aria-current="page">Passenger</a>
+        <a class="ux4g-btn ux4g-btn-text-primary ux4g-btn-sm" href="./audit.html">Audit</a>
+      </nav>
+      <div class="ux4g-navbar-right">
+        <span id="clock" aria-live="polite">--:--</span>
+        <button id="theme-toggle" class="ux4g-btn ux4g-btn-outline-primary ux4g-btn-sm" type="button">Dark theme</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dash-wrap">
+    <h1><span data-i18n="heading">Passenger arrivals</span> <small data-i18n="sub">pick a train, see what's next</small></h1>
+
+    <section class="ux4g-card ux4g-card-solid" aria-label="Train selection">
+      <div class="ux4g-card-header"><div class="ux4g-card-title" data-i18n="selectTitle">Choose your train</div></div>
+      <div class="ux4g-card-body">
+        <div class="dash-toolbar">
+          <label for="train-select" data-i18n="trainLabel">Train</label>
+          <select id="train-select" class="ux4g-form-select ux4g-form-select-md"></select>
+          <span class="dash-spacer"></span>
+          <div role="group" aria-label="Language">
+            <button class="ux4g-btn ux4g-btn-primary ux4g-btn-sm" type="button" data-lang="en" aria-pressed="true">EN</button>
+            <button class="ux4g-btn ux4g-btn-outline-primary ux4g-btn-sm" type="button" data-lang="hi" aria-pressed="false">HI</button>
+            <button class="ux4g-btn ux4g-btn-outline-primary ux4g-btn-sm" type="button" data-lang="mr" aria-pressed="false">MR</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ux4g-card ux4g-card-solid" aria-label="Upcoming stations">
+      <div class="ux4g-card-header"><div class="ux4g-card-title" data-i18n="nextStations">Upcoming stations</div></div>
+      <div class="ux4g-card-body">
+        <div class="dash-scroll-x">
+          <table class="ux4g-table" id="arr-table">
+            <thead><tr>
+              <th scope="col" data-i18n="colStation">Station</th>
+              <th scope="col" data-i18n="colExpected">Expected</th>
+              <th scope="col" data-i18n="colRange">Likely range</th>
+              <th scope="col" data-i18n="colOnTime">On-time chance</th>
+            </tr></thead>
+            <tbody><tr><td colspan="4" data-i18n="loading">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="ux4g-card ux4g-card-solid" aria-label="Why this ETA">
+      <div class="ux4g-card-header"><div class="ux4g-card-title" data-i18n="whyTitle">Why this time?</div></div>
+      <div class="ux4g-card-body">
+        <div class="ux4g-alert ux4g-alert-info">
+          <div class="ux4g-alert-title" data-i18n="whyHeading">Explanation</div>
+          <div class="ux4g-alert-message" id="explanation">–</div>
+        </div>
+      </div>
+    </section>
+
+    <div id="page-error" aria-live="assertive"></div>
+  </main>
+
+  <footer class="ux4g-footer ux4g-footer-primary">
+    <div class="ux4g-footer-wrapper">
+      <div class="ux4g-footer-row">
+        <span data-i18n="simNote">All data simulated. API docs at /docs.</span>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

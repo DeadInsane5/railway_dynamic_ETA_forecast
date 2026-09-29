@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Audit Trail — Dynamic ETA Forecast (Simulated data)</title>
+  <!-- UX4G delivery: authoritative pinned CDN (non-Node project, no npm).
+       Docs: https://doc.ux4g.gov.in/web/ ; classes mirror index.html (T12).
+       Theme: approved navy/saffron root overrides inherited from style.css;
+       no new token overrides on this page. -->
+  <link rel="stylesheet" href="https://cdn.ux4g.gov.in/UX4G@3.2.0/index.css" />
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://cdn.ux4g.gov.in/UX4G@3.2.0/ux4g.js" defer></script>
+  <script src="https://cdn.ux4g.gov.in/UX4G@3.2.0/ux4g-custom.js" defer></script>
+  <script src="./audit.js" defer></script>
+</head>
+<body>
+  <div class="tricolour-strip" aria-hidden="true"></div>
+
+  <header class="ux4g-navbar ux4g-navbar-desktop">
+    <div class="ux4g-navbar-wrap">
+      <div class="ux4g-navbar-logo">
+        <strong>Ministry of Railways — Dynamic ETA Forecast</strong>
+        <span class="ux4g-badge-digit-warning ux4g-badge-m">Simulated data</span>
+      </div>
+      <nav class="ux4g-navbar-links" aria-label="Primary">
+        <a class="ux4g-btn ux4g-btn-text-primary ux4g-btn-sm" href="./index.html">Control Room</a>
+        <a class="ux4g-btn ux4g-btn-text-primary ux4g-btn-sm" href="./passenger.html">Passenger</a>
+        <a class="ux4g-btn ux4g-btn-primary ux4g-btn-sm" href="./audit.html" aria-current="page">Audit</a>
+      </nav>
+      <div class="ux4g-navbar-right">
+        <span id="clock" aria-live="polite">--:--</span>
+        <button id="theme-toggle" class="ux4g-btn ux4g-btn-outline-primary ux4g-btn-sm" type="button">Dark theme</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dash-wrap">
+    <h1>Audit trail <small>signed, tamper-evident, simulated</small></h1>
+
+    <section class="ux4g-card ux4g-card-solid" aria-label="Chain verification">
+      <div class="ux4g-card-header"><div class="ux4g-card-title">Verify chain</div></div>
+      <div class="ux4g-card-body">
+        <div class="dash-toolbar">
+          <button id="btn-verify" class="ux4g-btn ux4g-btn-primary ux4g-btn-md" type="button">Verify chain</button>
+          <span class="dash-spacer"></span>
+          <span id="verify-summary" class="status-line" aria-live="polite"></span>
+        </div>
+        <div id="verify-result" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="ux4g-card ux4g-card-solid" aria-label="Currently selected ETA explanation">
+      <div class="ux4g-card-header"><div class="ux4g-card-title">Selected ETA explanation</div></div>
+      <div class="ux4g-card-body">
+        <div class="dash-toolbar">
+          <label for="train-select">Train</label>
+          <select id="train-select" class="ux4g-form-select ux4g-form-select-md"></select>
+        </div>
+        <div class="ux4g-alert ux4g-alert-info">
+          <div class="ux4g-alert-title" id="expl-title">Explanation</div>
+          <div class="ux4g-alert-message" id="explanation">–</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="ux4g-card ux4g-card-solid" aria-label="Audit entries">
+      <div class="ux4g-card-header"><div class="ux4g-card-title">Entries (latest 50)</div></div>
+      <div class="ux4g-card-body">
+        <div class="dash-scroll-x">
+          <table class="ux4g-table" id="audit-table">
+            <thead><tr>
+              <th scope="col">Seq</th><th scope="col">Time (UTC)</th>
+              <th scope="col">Kind</th><th scope="col">Hash</th>
+              <th scope="col">Sig</th><th scope="col">Detail</th>
+            </tr></thead>
+            <tbody><tr><td colspan="6">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <div id="page-error" aria-live="assertive"></div>
+  </main>
+
+  <footer class="ux4g-footer ux4g-footer-primary">
+    <div class="ux4g-footer-wrapper">
+      <div class="ux4g-footer-row">
+        <span>Dynamic ETA Forecast prototype — all data simulated. API docs at <a href="/docs">/docs</a>.</span>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>

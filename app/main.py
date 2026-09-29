@@ -113,6 +113,13 @@ def api_whatif(body: WhatIfBody) -> JSONResponse:
 
 # -- audit / metrics / learning / tick ---------------------------------------
 
+@app.get("/api/audit/verify")
+def api_audit_verify() -> JSONResponse:
+    """T13 — chain verification only (no entries payload)."""
+    ok, bad_seq = audit.verify()
+    return _ok({"valid": ok, "first_bad_seq": bad_seq})
+
+
 @app.get("/api/audit")
 def api_audit(limit: int | None = None) -> JSONResponse:
     ok, bad_seq = audit.verify()
