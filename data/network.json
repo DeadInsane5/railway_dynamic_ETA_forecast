@@ -1,0 +1,168 @@
+{
+  "stations": [
+    {
+      "id": "S1",
+      "name": "NDLS"
+    },
+    {
+      "id": "S2",
+      "name": "GZB"
+    },
+    {
+      "id": "S3",
+      "name": "ALJN"
+    },
+    {
+      "id": "S4",
+      "name": "TDL"
+    },
+    {
+      "id": "S5",
+      "name": "CNB"
+    },
+    {
+      "id": "S6",
+      "name": "LKO"
+    },
+    {
+      "id": "S7",
+      "name": "AY"
+    },
+    {
+      "id": "S8",
+      "name": "BSB"
+    },
+    {
+      "id": "S9",
+      "name": "MGS"
+    },
+    {
+      "id": "S10",
+      "name": "PNBE"
+    },
+    {
+      "id": "S11",
+      "name": "KIUL"
+    },
+    {
+      "id": "S12",
+      "name": "HWH"
+    }
+  ],
+  "sections": [
+    {
+      "id": "S1-S2",
+      "from": "S1",
+      "to": "S2",
+      "km": 18,
+      "sched_run_min": 14.4,
+      "type": "plain"
+    },
+    {
+      "id": "S2-S3",
+      "from": "S2",
+      "to": "S3",
+      "km": 22,
+      "sched_run_min": 17.6,
+      "type": "plain"
+    },
+    {
+      "id": "S3-S4",
+      "from": "S3",
+      "to": "S4",
+      "km": 15,
+      "sched_run_min": 16.4,
+      "type": "loop"
+    },
+    {
+      "id": "S4-S5",
+      "from": "S4",
+      "to": "S5",
+      "km": 28,
+      "sched_run_min": 22.4,
+      "type": "plain"
+    },
+    {
+      "id": "S5-S6",
+      "from": "S5",
+      "to": "S6",
+      "km": 20,
+      "sched_run_min": 24.0,
+      "type": "junction"
+    },
+    {
+      "id": "S6-S7",
+      "from": "S6",
+      "to": "S7",
+      "km": 25,
+      "sched_run_min": 20.0,
+      "type": "plain"
+    },
+    {
+      "id": "S7-S8",
+      "from": "S7",
+      "to": "S8",
+      "km": 12,
+      "sched_run_min": 13.1,
+      "type": "loop"
+    },
+    {
+      "id": "S8-S9",
+      "from": "S8",
+      "to": "S9",
+      "km": 30,
+      "sched_run_min": 24.0,
+      "type": "plain"
+    },
+    {
+      "id": "S9-S10",
+      "from": "S9",
+      "to": "S10",
+      "km": 24,
+      "sched_run_min": 19.2,
+      "type": "plain"
+    },
+    {
+      "id": "S10-S11",
+      "from": "S10",
+      "to": "S11",
+      "km": 16,
+      "sched_run_min": 19.2,
+      "type": "junction"
+    },
+    {
+      "id": "S11-S12",
+      "from": "S11",
+      "to": "S12",
+      "km": 35,
+      "sched_run_min": 28.0,
+      "type": "plain"
+    }
+  ],
+  "restrictions": [
+    {
+      "id": "R1",
+      "section": "S11-S12",
+      "start_min": 720,
+      "end_min": 810,
+      "extra_min": 5.3,
+      "cause": "bridge inspection"
+    },
+    {
+      "id": "R2",
+      "section": "S2-S3",
+      "start_min": 360,
+      "end_min": 510,
+      "extra_min": 8.4,
+      "cause": "bridge inspection"
+    },
+    {
+      "id": "R3",
+      "section": "S1-S2",
+      "start_min": 360,
+      "end_min": 510,
+      "extra_min": 6.5,
+      "cause": "track work"
+    }
+  ]
+}

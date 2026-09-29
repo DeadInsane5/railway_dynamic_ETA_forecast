@@ -1,0 +1,11 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+# venv
+.venv/
+# data outputs (regenerable, keep tracked? ignore audit log + keep sim outputs local)
+data/audit.jsonl
+data/*.pkl
+# OS
+.DS_Store
