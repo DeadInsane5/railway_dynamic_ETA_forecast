@@ -1,0 +1,138 @@
+/* T12 dashboard theme + documented UX4G gaps.
+ *
+ * Theme: approved Railway navy (#1B3A6B) / saffron (#E87722), applied as
+ * root token overrides only (contract: tokens, not selectors). Every
+ * --ux4g-* name below was grep-verified in the shipped CDN artifact
+ * (cdn.ux4g.gov.in/UX4G@3.2.0): button.css aliases bg-primary-strong/
+ * -strong-hover/-stronger to color-primary-600/700/800 (light) and
+ * 300/400/200 (dark), so overriding the primitive scale re-themes all
+ * button states via the cascade (v2.0.1 note). Contrast verified:
+ * white on #1B3A6B = 11.27, ink on #9DB4DD (dark) = 8.54.
+ */
+
+/* -- Approved brand overrides: light theme scale ------------------------- */
+:root {
+  --ux4g-color-primary-600: #1b3a6b !important;
+  --ux4g-color-primary-700: #152d55 !important;
+  --ux4g-color-primary-800: #102442 !important;
+  --ux4g-color-secondary-600: #e87722 !important;
+  --ux4g-color-secondary-700: #c96415 !important;
+  --ux4g-color-secondary-800: #a95412 !important;
+}
+
+/* -- Approved brand overrides: dark theme parity (dark aliases strong to
+ *    the 300/400/200 steps; without these, dark mode falls back to the
+ *    default violet scale and breaks brand continuity). Tints derived
+ *    from the approved hues; ink-on-tint contrast >= 8.5. ------------- */
+:root[data-theme="dark"] {
+  --ux4g-color-primary-200: #c2d1ea !important;
+  --ux4g-color-primary-300: #9db4dd !important;
+  --ux4g-color-primary-400: #6e8cc2 !important;
+  --ux4g-color-secondary-200: #f9cfa4 !important;
+  --ux4g-color-secondary-300: #f5b47e !important;
+  --ux4g-color-secondary-400: #ee9a55 !important;
+}
+
+/* -- G3: tricolour accent strip. UX4G ships no flag-motif utility; band 1
+ *    reuses the approved secondary token, bands 2-3 are the national
+ *    colours (no UX4G token exists for them). --------------------------- */
+.tricolour-strip {
+  height: 4px;
+  background: linear-gradient(
+    to right,
+    var(--ux4g-color-secondary-600) 0 33.3%,
+    #ffffff 33.3% 66.6%,
+    #138808 66.6% 100%
+  );
+}
+
+/* -- G4: page layout grid. The CDN layout bundle only exposes import
+ *    stubs at this version for the classes we could verify, so the
+ *    dashboard grid is application-specific CSS. ------------------------ */
+.dash-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+.dash-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+@media (min-width: 1024px) {
+  .dash-grid-cols-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .dash-grid-kpis {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+.dash-scroll-x {
+  overflow-x: auto;
+}
+.dash-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+.dash-spacer {
+  flex: 1 1 auto;
+}
+
+/* -- G5: KPI numerals. No verified type-utility class names at this
+ *    version, so one size rule (colour comes from the card). ------------ */
+.kpi-num {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* -- G1: ETA interval bars. UX4G has no range/interval component
+ *    (progress-indicator is single-value). Track/fill use confirmed
+ *    UX4G tokens; only geometry is custom. ------------------------------ */
+.eta-bar {
+  position: relative;
+  height: 10px;
+  min-width: 120px;
+  background-color: var(--ux4g-bg-neutral-subtle);
+  border-radius: var(--ux4g-radius-full);
+}
+.eta-bar-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background-color: var(--ux4g-bg-primary-strong);
+  border-radius: var(--ux4g-radius-full);
+  opacity: 0.35;
+}
+.eta-bar-marker {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 3px;
+  background-color: var(--ux4g-bg-primary-strong);
+  border-radius: var(--ux4g-radius-full);
+}
+
+/* -- G2: delay-matrix heat. No UX4G heatmap; base table is .ux4g-table,
+ *    intensity is color-mix over confirmed status tokens. -------------- */
+@supports (background-color: color-mix(in srgb, red 50%, transparent)) {
+  .heat-0 { background-color: transparent; }
+  .heat-1 { background-color: color-mix(in srgb, var(--ux4g-bg-warning-strong) 25%, transparent); }
+  .heat-2 { background-color: color-mix(in srgb, var(--ux4g-bg-warning-strong) 55%, transparent); }
+  .heat-3 { background-color: color-mix(in srgb, var(--ux4g-bg-error-strong) 45%, transparent); }
+  .heat-4 { background-color: color-mix(in srgb, var(--ux4g-bg-error-strong) 75%, transparent); }
+}
+.heat-cell {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.status-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+}

@@ -1,5 +1,166 @@
-<!doctype html><html><body>
-<h1>Dynamic ETA Forecast (Simulated data)</h1>
-<p>Dashboard arrives in T12. API is live: see <a href="/docs">/docs</a>.</p>
-<p>Try <a href="/api/trains">/api/trains</a> and <a href="/api/eta/T101">/api/eta/T101</a>.</p>
-</body></html>
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dynamic ETA Forecast — Control Room (Simulated data)</title>
+  <!-- UX4G delivery: authoritative pinned CDN (non-Node project, no npm).
+       Docs: https://doc.ux4g.gov.in/web/ ; classes verified against the
+       shipped 3.2.0 stylesheets. -->
+  <link rel="stylesheet" href="https://cdn.ux4g.gov.in/UX4G@3.2.0/index.css" />
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://cdn.ux4g.gov.in/UX4G@3.2.0/ux4g.js" defer></script>
+  <script src="https://cdn.ux4g.gov.in/UX4G@3.2.0/ux4g-custom.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <div class="tricolour-strip" aria-hidden="true"></div>
+
+  <header class="ux4g-navbar ux4g-navbar-desktop">
+    <div class="ux4g-navbar-wrap">
+      <div class="ux4g-navbar-logo">
+        <strong>Ministry of Railways — Dynamic ETA Forecast</strong>
+        <span class="ux4g-badge-digit-warning ux4g-badge-m">Simulated data</span>
+      </div>
+      <nav class="ux4g-navbar-links" aria-label="Primary">
+        <a class="ux4g-btn ux4g-btn-primary ux4g-btn-sm" href="./index.html" aria-current="page">Control Room</a>
+        <a class="ux4g-btn ux4g-btn-text-primary ux4g-btn-sm" href="./passenger.html">Passenger</a>
+        <a class="ux4g-btn ux4g-btn-text-primary ux4g-btn-sm" href="./audit.html">Audit</a>
+      </nav>
+      <div class="ux4g-navbar-right">
+        <span id="clock" aria-live="polite">--:--</span>
+        <button id="theme-toggle" class="ux4g-btn ux4g-btn-outline-primary ux4g-btn-sm" type="button">Dark theme</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="dash-wrap">
+    <h1>Control Room <small>all panels live from the API</small></h1>
+
+    <!-- 1. Header KPIs -->
+    <section aria-label="Key indicators">
+      <div class="dash-grid dash-grid-kpis" id="kpis">
+        <div class="ux4g-card ux4g-card-solid"><div class="ux4g-card-body">
+          <div class="ux4g-card-sub-title">Trains tracked</div>
+          <div class="kpi-num" id="kpi-trains">–</div>
+        </div></div>
+        <div class="ux4g-card ux4g-card-solid"><div class="ux4g-card-body">
+          <div class="ux4g-card-sub-title">On-time %</div>
+          <div class="kpi-num" id="kpi-ontime">–</div>
+        </div></div>
+        <div class="ux4g-card ux4g-card-solid"><div class="ux4g-card-body">
+          <div class="ux4g-card-sub-title">Fallback count</div>
+          <div class="kpi-num" id="kpi-fallback">–</div>
+        </div></div>
+        <div class="ux4g-card ux4g-card-solid"><div class="ux4g-card-body">
+          <div class="ux4g-card-sub-title">Model version</div>
+          <div class="kpi-num" id="kpi-model">–</div>
+        </div></div>
+        <div class="ux4g-card ux4g-card-solid"><div class="ux4g-card-body">
+          <div class="ux4g-card-sub-title">Jidoka open</div>
+          <div class="kpi-num" id="kpi-jidoka">–</div>
+        </div></div>
+      </div>
+    </section>
+
+    <div class="dash-grid dash-grid-cols-2">
+      <!-- 2. Train table + ETA bars -->
+      <section class="ux4g-card ux4g-card-solid" aria-label="Trains and ETA ranges">
+        <div class="ux4g-card-header">
+          <div class="ux4g-card-title">Trains → ETA ranges (p10–p90, marker p50)</div>
+        </div>
+        <div class="ux4g-card-body">
+          <div class="dash-toolbar">
+            <label for="train-select">Train</label>
+            <select id="train-select" class="ux4g-form-select ux4g-form-select-md"></select>
+            <span class="dash-spacer"></span>
+            <button id="btn-advance" class="ux4g-btn ux4g-btn-primary ux4g-btn-md" type="button">Advance 5 min</button>
+          </div>
+          <div class="dash-scroll-x">
+            <table class="ux4g-table" id="eta-table">
+              <thead><tr>
+                <th scope="col">Station</th><th scope="col">Sched</th>
+                <th scope="col">p10–p90</th><th scope="col">Delay p50</th><th scope="col">P(on-time)</th>
+              </tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Regime + router -->
+      <section class="ux4g-card ux4g-card-solid" aria-label="Regime and router activity">
+        <div class="ux4g-card-header"><div class="ux4g-card-title">Regime + router activity</div></div>
+        <div class="ux4g-card-body">
+          <p id="router-counts" class="status-line">–</p>
+          <div class="dash-scroll-x">
+            <table class="ux4g-table" id="regime-table">
+              <thead><tr><th scope="col">Train</th><th scope="col">Regime</th><th scope="col">Path</th><th scope="col">Delay</th></tr></thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 3. Delay matrix heatmap -->
+    <section class="ux4g-card ux4g-card-solid" aria-label="Delay matrix heatmap">
+      <div class="ux4g-card-header"><div class="ux4g-card-title">Delay matrix heatmap (stations × trains, pred. arrival delay min)</div></div>
+      <div class="ux4g-card-body">
+        <div class="dash-scroll-x"><table class="ux4g-table" id="matrix-table">
+          <thead><tr><th scope="col">Station</th></tr></thead>
+          <tbody></tbody>
+        </table></div>
+      </div>
+    </section>
+
+    <div class="dash-grid dash-grid-cols-2">
+      <!-- 5. Jidoka queue -->
+      <section class="ux4g-card ux4g-card-solid" aria-label="Jidoka queue">
+        <div class="ux4g-card-header"><div class="ux4g-card-title">Jidoka queue</div></div>
+        <div class="ux4g-card-body" id="jidoka-list"></div>
+      </section>
+
+      <!-- 6. Explanation + what-if -->
+      <section class="ux4g-card ux4g-card-solid" aria-label="Explanation and what-if">
+        <div class="ux4g-card-header"><div class="ux4g-card-title">Explanation + what-if</div></div>
+        <div class="ux4g-card-body">
+          <p id="explanation">–</p>
+          <div class="dash-toolbar">
+            <button id="btn-whatif" class="ux4g-btn ux4g-btn-primary ux4g-btn-md" type="button">Hold 10 min at mid-journey station</button>
+          </div>
+          <div id="whatif-result" aria-live="polite"></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 7. Learning + scoreboard -->
+    <section class="ux4g-card ux4g-card-solid" aria-label="Learning and scoreboard">
+      <div class="ux4g-card-header"><div class="ux4g-card-title">Learning cycle + model vs baseline MAE</div></div>
+      <div class="ux4g-card-body">
+        <div class="dash-toolbar">
+          <button id="btn-learn" class="ux4g-btn ux4g-btn-primary ux4g-btn-md" type="button">Run learning cycle</button>
+          <span id="learn-status" class="status-line" aria-live="polite"></span>
+        </div>
+        <div id="learn-result" aria-live="polite"></div>
+        <div class="dash-scroll-x">
+          <table class="ux4g-table" id="score-table">
+            <thead><tr><th scope="col">Horizon</th><th scope="col">MAE model</th><th scope="col">MAE baseline</th><th scope="col">P10–P90 coverage</th><th scope="col">n</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <div id="page-error" aria-live="assertive"></div>
+  </main>
+
+  <footer class="ux4g-footer ux4g-footer-primary">
+    <div class="ux4g-footer-wrapper">
+      <div class="ux4g-footer-row">
+        <span>Dynamic ETA Forecast prototype — all data simulated. API docs at <a href="/docs">/docs</a>.</span>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
