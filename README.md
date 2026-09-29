@@ -75,6 +75,13 @@ force schedule-fallback for stale or quarantined feeds.)
 
 API reference with try-it-out is auto-generated at `/docs`.
 
+## Demo recording
+
+[`DEMO-GUIDE.md`](DEMO-GUIDE.md) — 60-second teleprompter script with click
+cues, pre-flight reset steps, a troubleshooting table, and the answers to the
+questions a judge is most likely to ask (including why the "Fallback count" KPI
+reads 33).
+
 ## Limitations
 
 Results are simulated and do not show real-world accuracy: the timetable,
